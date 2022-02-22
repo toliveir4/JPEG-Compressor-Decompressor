@@ -21,11 +21,13 @@ def encoder(): # 2
 
     YCbCr = RGBtoYCbCr(R, G, B) # 5
 
-    showYCbCr(YCbCr) # 5
+    # showYCbCr(YCbCr) # 5
 
-    YD, CbD, CrD = downSample422(YCbCr) # 6
+    # YD, CbD, CrD = downSample422(YCbCr) # 6
 
-    return R, G, B, YCbCr, YD,CbD, CrD
+    YD, CbD, CrD = downSample420(YCbCr) # 6
+
+    return R, G, B, YD, CbD, CrD
 
 
 def getColormap(): # 3.2
@@ -99,9 +101,28 @@ def downSample422(YCbCr): # 6
     return Y, Cb, Cr
 
 
-def decoder(R, G, B, YCbCr, YD, CbD, CrD): # 2
-    RGBAfter = YCbCrtoRGB(YCbCr) # 5
-    RGBBefore = joinRGB(R, G, B) # 3.4
+def downSample420(YCbCr): # 6
+    Y = YCbCr[:, :, 0]
+    Cb = YCbCr[:, :, 1]
+    Cr = YCbCr[:, :, 2]
+
+    Cb = Cb[:, ::2]
+    Cb = Cb[::2, :]
+    Cr = Cr[:, ::2]
+    Cr = Cr[::2, :]
+
+    return Y, Cb, Cr
+
+
+def decoder(R, G, B, YD, CbD, CrD): # 2
+    # YCbCrU = upSample422(YD, CbD, CrD) # 6
+
+    # YCbCrU = upSample420(YD, CbD, CrD) # 6
+    
+    # showYCbCr(YCbCrU) # 6
+
+    # RGBAfter = YCbCrtoRGB(YCbCrU) # 5
+    # RGBBefore = joinRGB(R, G, B) # 3.4
     
     '''plt.figure()
     plt.imshow(RGBAfter)
@@ -109,9 +130,6 @@ def decoder(R, G, B, YCbCr, YD, CbD, CrD): # 2
     comp = RGBAfter == RGBBefore
     res = comp.all()
     print(res)'''
-
-    YCbCrU = upSample422(YD, CbD, CrD) # 6
-    showYCbCr(YCbCrU)
 
 def joinRGB(R, G, B): # 3.4
     RGB = np.dstack((R, G, B))
@@ -136,13 +154,20 @@ def YCbCrtoRGB(YCbCr): # 5
 
 
 def upSample422(YD, CbD, CrD): # 6
-    print(CbD)
-    print(np.shape(CbD))
     CbU = np.repeat(CbD, 2, axis=1)
-    print(np.shape(CbU))
-    print(CbU)
     
     CrU = np.repeat(CrD, 2, axis=1)
+
+    YCbCrU = np.dstack((YD, CbU, CrU))
+
+    return YCbCrU
+
+
+def upSample420(YD, CbD, CrD): # 6
+    CbU = np.repeat(CbD, 2, axis=1)
+    CbU = np.repeat(CbU, 2, axis=0)
+    CrU = np.repeat(CrD, 2, axis=1)
+    CrU = np.repeat(CrU, 2, axis=0)
 
     YCbCrU = np.dstack((YD, CbU, CrU))
 
@@ -165,8 +190,8 @@ def showYCbCr(YCbCr): # 5
 def main():
     plt.close('all')
 
-    R, G, B, YCbCr, YD, CbD, CrD = encoder()
-    decoder(R, G, B, YCbCr, YD, CbD, CrD)
+    R, G, B, YD, CbD, CrD = encoder()
+    decoder(R, G, B, YD, CbD, CrD)
 
     plt.show()
 
