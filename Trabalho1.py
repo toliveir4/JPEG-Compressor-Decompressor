@@ -6,8 +6,8 @@ import numpy as np
 def encoder(): # 2
     img = plt.imread('imagens/peppers.bmp') # 3.1
 
-    # plt.figure()
-    # plt.imshow(img)
+    '''plt.figure()
+    plt.imshow(img)'''
 
     # cm = getColormap() # 3.2
 
@@ -23,9 +23,9 @@ def encoder(): # 2
 
     # showYCbCr(YCbCr) # 5
 
-    # YD, CbD, CrD = downSample422(YCbCr) # 6
+    YD, CbD, CrD = downSample422(YCbCr) # 6
 
-    YD, CbD, CrD = downSample420(YCbCr) # 6
+    # YD, CbD, CrD = downSample420(YCbCr) # 6
 
     return R, G, B, YD, CbD, CrD
 
@@ -115,21 +115,22 @@ def downSample420(YCbCr): # 6
 
 
 def decoder(R, G, B, YD, CbD, CrD): # 2
-    # YCbCrU = upSample422(YD, CbD, CrD) # 6
+    YCbCrU = upSample422(YD, CbD, CrD) # 6
 
     # YCbCrU = upSample420(YD, CbD, CrD) # 6
     
     # showYCbCr(YCbCrU) # 6
 
-    # RGBAfter = YCbCrtoRGB(YCbCrU) # 5
+    RGBAfter = YCbCrtoRGB(YCbCrU) # 5
     # RGBBefore = joinRGB(R, G, B) # 3.4
     
     '''plt.figure()
-    plt.imshow(RGBAfter)
+    plt.imshow(RGBAfter)'''
 
-    comp = RGBAfter == RGBBefore
+    '''comp = RGBAfter == RGBBefore
     res = comp.all()
     print(res)'''
+
 
 def joinRGB(R, G, B): # 3.4
     RGB = np.dstack((R, G, B))
