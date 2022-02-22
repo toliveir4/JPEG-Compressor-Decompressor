@@ -3,42 +3,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def encoder():
-    img = plt.imread('imagens/peppers.bmp')
+def encoder(): # 2
+    img = plt.imread('imagens/peppers.bmp') # 3.1
 
     # plt.figure()
     # plt.imshow(img)
 
-    # cm = getColormap()
+    # cm = getColormap() # 3.2
 
-    # viewColormap(cm, img)
+    # viewColormap(cm, img) # 3.3
     
-    R, G, B = separateRGB(img)
+    R, G, B = separateRGB(img) # 3.4
 
-    # viewChanels(R, G, B)
+    # viewChanels(R, G, B) # 3.5
 
-    addPadding(img)
+    addPadding(img) # 4.1
 
-    YCbCr = RGBtoYCbCr(R, G, B)
+    YCbCr = RGBtoYCbCr(R, G, B) # 5
 
-    # showYCbCr(YCbCr)
+    showYCbCr(YCbCr) # 5
 
-    return R, G, B, YCbCr
+    YD, CbD, CrD = downSample422(YCbCr) # 6
+
+    return R, G, B, YCbCr, YD,CbD, CrD
 
 
-def getColormap():
+def getColormap(): # 3.2
     inp = str(input("Introduza colormap: r, g, b "))
     r, g, b = inp.split(",")
     cm = clr.LinearSegmentedColormap.from_list('cm', [(0, 0, 0), (int(r), int(g), int(b))], N=256)
     return cm
 
 
-def viewColormap(cm, img):
+def viewColormap(cm, img): # 3.3
     plt.figure()
     plt.imshow(img, cm)
 
 
-def viewChanels(R, G, B):
+def viewChanels(R, G, B): # 3.5
     plt.figure()
     plt.imshow(R, cmr)
     
@@ -49,7 +51,7 @@ def viewChanels(R, G, B):
     plt.imshow(B, cmb)
 
 
-def separateRGB(img):
+def separateRGB(img): # 3.4
     R = img[:, :, 0]
     G = img[:, :, 1]
     B = img[:, :, 2]
@@ -57,7 +59,7 @@ def separateRGB(img):
     return R, G, B
 
 
-def addPadding(img):
+def addPadding(img): # 4.1
     h, w, d = np.shape(img)
 
     if h % 16 != 0:
@@ -73,7 +75,7 @@ def addPadding(img):
         img = np.repeat(img, arr, axis=1)
 
 
-def RGBtoYCbCr(R, G, B):
+def RGBtoYCbCr(R, G, B): # 5
     matrix = np.array([[0.299, 0.587, 0.114], 
                     [-0.168736, -0.331264, 0.5], 
                     [0.5, -0.418688, -0.081312]])
@@ -86,24 +88,38 @@ def RGBtoYCbCr(R, G, B):
     return YCbCr
 
 
-def decoder(R, G, B, YCbCr):
-    RGBAfter = YCbCrtoRGB(YCbCr)
-    RGBBefore = joinRGB(R, G, B)
+def downSample422(YCbCr): # 6
+    Y = YCbCr[:, :, 0]
+    Cb = YCbCr[:, :, 1]
+    Cr = YCbCr[:, :, 2]
+
+    Cb = Cb[:, ::2]
+    Cr = Cr[:, ::2]
+
+    return Y, Cb, Cr
+
+
+def decoder(R, G, B, YCbCr, YD, CbD, CrD): # 2
+    RGBAfter = YCbCrtoRGB(YCbCr) # 5
+    RGBBefore = joinRGB(R, G, B) # 3.4
     
-    # plt.figure()
-    # plt.imshow(RGBAfter)
+    '''plt.figure()
+    plt.imshow(RGBAfter)
 
-    # comp = RGBAfter == RGBBefore
-    # res = comp.all()
-    # print(res)
+    comp = RGBAfter == RGBBefore
+    res = comp.all()
+    print(res)'''
 
-def joinRGB(R, G, B):
+    YCbCrU = upSample422(YD, CbD, CrD) # 6
+    showYCbCr(YCbCrU)
+
+def joinRGB(R, G, B): # 3.4
     RGB = np.dstack((R, G, B))
 
     return RGB
 
 
-def YCbCrtoRGB(YCbCr):
+def YCbCrtoRGB(YCbCr): # 5
     matrix = np.array([[0.299, 0.587, 0.114], 
                     [-0.168736, -0.331264, 0.5], 
                     [0.5, -0.418688, -0.081312]])
@@ -119,7 +135,21 @@ def YCbCrtoRGB(YCbCr):
     return RGB
 
 
-def showYCbCr(YCbCr):
+def upSample422(YD, CbD, CrD): # 6
+    print(CbD)
+    print(np.shape(CbD))
+    CbU = np.repeat(CbD, 2, axis=1)
+    print(np.shape(CbU))
+    print(CbU)
+    
+    CrU = np.repeat(CrD, 2, axis=1)
+
+    YCbCrU = np.dstack((YD, CbU, CrU))
+
+    return YCbCrU
+
+
+def showYCbCr(YCbCr): # 5
     Y = YCbCr[:, :, 0]
     Cb = YCbCr[:, :, 1]
     Cr = YCbCr[:, :, 2]
@@ -135,8 +165,8 @@ def showYCbCr(YCbCr):
 def main():
     plt.close('all')
 
-    R, G, B, YCbCr = encoder()
-    decoder(R, G, B, YCbCr)
+    R, G, B, YCbCr, YD, CbD, CrD = encoder()
+    decoder(R, G, B, YCbCr, YD, CbD, CrD)
 
     plt.show()
 
