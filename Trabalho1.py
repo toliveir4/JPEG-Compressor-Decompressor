@@ -1,6 +1,7 @@
 import matplotlib.colors as clr
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.fftpack import dct, idct
 
 
 def encoder(): # 2
@@ -27,7 +28,21 @@ def encoder(): # 2
 
     # YD, CbD, CrD = downSample420(YCbCr) # 6
 
-    return R, G, B, YD, CbD, CrD
+    Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
+
+    """
+    #7.1.2
+    plt.figure()
+    plt.imshow(np.log(abs(Y_dct) + 0.0001))
+
+    plt.figure()
+    plt.imshow(np.log(abs(Cb_dct) + 0.0001))
+
+    plt.figure()
+    plt.imshow(np.log(abs(Cr_dct) + 0.0001))
+    """
+
+    return R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct
 
 
 def getColormap(): # 3.2
@@ -90,10 +105,16 @@ def RGBtoYCbCr(R, G, B): # 5
     return YCbCr
 
 
-def downSample422(YCbCr): # 6
+def separateYCbCr(YCbCr):
     Y = YCbCr[:, :, 0]
     Cb = YCbCr[:, :, 1]
     Cr = YCbCr[:, :, 2]
+    
+    return Y, Cb, Cr
+
+
+def downSample422(YCbCr): # 6
+    Y, Cb, Cr = separateYCbCr(YCbCr)
 
     Cb = Cb[:, ::2]
     Cr = Cr[:, ::2]
@@ -102,9 +123,7 @@ def downSample422(YCbCr): # 6
 
 
 def downSample420(YCbCr): # 6
-    Y = YCbCr[:, :, 0]
-    Cb = YCbCr[:, :, 1]
-    Cr = YCbCr[:, :, 2]
+    Y, Cb, Cr = separateYCbCr(YCbCr)
 
     Cb = Cb[:, ::2]
     Cb = Cb[::2, :]
@@ -114,7 +133,15 @@ def downSample420(YCbCr): # 6
     return Y, Cb, Cr
 
 
-def decoder(R, G, B, YD, CbD, CrD): # 2
+def calcDCT(YD, CbD, CrD): # 7.1
+    Y_dct = dct(dct(YD, norm='ortho').T, norm='ortho').T
+    Cb_dct = dct(dct(CbD, norm='ortho').T, norm='ortho').T
+    Cr_dct = dct(dct(CrD, norm='ortho').T, norm='ortho').T
+
+    return Y_dct, Cb_dct, Cr_dct
+
+
+def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
     YCbCrU = upSample422(YD, CbD, CrD) # 6
 
     # YCbCrU = upSample420(YD, CbD, CrD) # 6
@@ -130,6 +157,8 @@ def decoder(R, G, B, YD, CbD, CrD): # 2
     '''comp = RGBAfter == RGBBefore
     res = comp.all()
     print(res)'''
+    
+    # Y_a, Cb_a, Cr_a = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
 
 
 def joinRGB(R, G, B): # 3.4
@@ -176,9 +205,7 @@ def upSample420(YD, CbD, CrD): # 6
 
 
 def showYCbCr(YCbCr): # 5
-    Y = YCbCr[:, :, 0]
-    Cb = YCbCr[:, :, 1]
-    Cr = YCbCr[:, :, 2]
+    Y, Cb, Cr = separateYCbCr(YCbCr)
 
     plt.figure()
     plt.imshow(Y, cmGray)
@@ -188,11 +215,19 @@ def showYCbCr(YCbCr): # 5
     plt.imshow(Cr, cmGray)
 
 
+def calcIDCT(Y_dct, Cb_dct, Cr_dct):
+    Y = idct(idct(Y_dct, norm='ortho').T, norm='ortho').T
+    Cb = idct(idct(Cb_dct, norm='ortho').T, norm='ortho').T
+    Cr = idct(idct(Cr_dct, norm='ortho').T, norm='ortho').T
+    
+    return Y, Cb, Cr
+
+
 def main():
     plt.close('all')
 
-    R, G, B, YD, CbD, CrD = encoder()
-    decoder(R, G, B, YD, CbD, CrD)
+    R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct = encoder()
+    decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct)
 
     plt.show()
 
