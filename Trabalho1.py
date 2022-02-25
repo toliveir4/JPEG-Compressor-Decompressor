@@ -46,7 +46,7 @@ def encoder(): # 2
 
 
 def getColormap(): # 3.2
-    inp = str(input("Introduza colormap: r, g, b "))
+    inp = str(input("Introduza colormap (r, g, b): "))
     r, g, b = inp.split(",")
     cm = clr.LinearSegmentedColormap.from_list('cm', [(0, 0, 0), (int(r), int(g), int(b))], N=256)
     return cm
