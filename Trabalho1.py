@@ -13,7 +13,7 @@ def encoder(): # 2
     # cm = getColormap() # 3.2
 
     # viewColormap(cm, img) # 3.3
-    
+
     img = addPadding(img) # 4.1
 
     R, G, B = separateRGB(img) # 3.4
@@ -24,9 +24,9 @@ def encoder(): # 2
 
     # showYCbCr(YCbCr) # 5
 
-    # YD, CbD, CrD = downSample422(YCbCr) # 6
+    YD, CbD, CrD = downSample422(YCbCr) # 6
 
-    YD, CbD, CrD = downSample420(YCbCr) # 6
+    # YD, CbD, CrD = downSample420(YCbCr) # 6
 
     """plt.figure()
     plt.imshow(YD, cmGray)
@@ -39,17 +39,18 @@ def encoder(): # 2
 
     Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
 
-    """
+    
     #7.1.2
     plt.figure()
     plt.imshow(np.log(abs(Y_dct) + 0.0001))
-
+    plt.colorbar()
     plt.figure()
     plt.imshow(np.log(abs(Cb_dct) + 0.0001))
-
+    plt.colorbar()
     plt.figure()
     plt.imshow(np.log(abs(Cr_dct) + 0.0001))
-    """
+    plt.colorbar()
+    
 
     return R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct
 
@@ -153,9 +154,9 @@ def calcDCT(YD, CbD, CrD): # 7.1
 
 
 def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
-    # YCbCrU = upSample422(YD, CbD, CrD) # 6
+    YCbCrU = upSample422(YD, CbD, CrD) # 6
 
-    YCbCrU = upSample420(YD, CbD, CrD) # 6
+    # YCbCrU = upSample420(YD, CbD, CrD) # 6
     
     # showYCbCr(YCbCrU) # 6
 
