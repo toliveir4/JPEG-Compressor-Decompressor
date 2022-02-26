@@ -5,7 +5,7 @@ from scipy.fftpack import dct, idct
 
 
 def encoder(): # 2
-    img = plt.imread('imagens/peppers.bmp') # 3.1
+    img = plt.imread('imagens/barn_mountains.bmp') # 3.1
 
     '''plt.figure()
     plt.imshow(img)'''
@@ -14,19 +14,28 @@ def encoder(): # 2
 
     # viewColormap(cm, img) # 3.3
     
+    img = addPadding(img) # 4.1
+
     R, G, B = separateRGB(img) # 3.4
 
     # viewChanels(R, G, B) # 3.5
-
-    addPadding(img) # 4.1
-
+    
     YCbCr = RGBtoYCbCr(R, G, B) # 5
 
     # showYCbCr(YCbCr) # 5
 
-    YD, CbD, CrD = downSample422(YCbCr) # 6
+    # YD, CbD, CrD = downSample422(YCbCr) # 6
 
-    # YD, CbD, CrD = downSample420(YCbCr) # 6
+    YD, CbD, CrD = downSample420(YCbCr) # 6
+
+    """plt.figure()
+    plt.imshow(YD, cmGray)
+    
+    plt.figure()
+    plt.imshow(CbD, cmGray)
+    
+    plt.figure()
+    plt.imshow(CrD, cmGray)"""
 
     Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
 
@@ -77,7 +86,8 @@ def separateRGB(img): # 3.4
 
 
 def addPadding(img): # 4.1
-    h, w, d = np.shape(img)
+    global h, w
+    h, w, _ = np.shape(img)
 
     if h % 16 != 0:
         add = 16 - (h % 16)
@@ -90,6 +100,7 @@ def addPadding(img): # 4.1
         arr = np.ones(w, dtype=int)
         arr[w-1] = add + 1
         img = np.repeat(img, arr, axis=1)
+    return img
 
 
 def RGBtoYCbCr(R, G, B): # 5
@@ -142,9 +153,9 @@ def calcDCT(YD, CbD, CrD): # 7.1
 
 
 def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
-    YCbCrU = upSample422(YD, CbD, CrD) # 6
+    # YCbCrU = upSample422(YD, CbD, CrD) # 6
 
-    # YCbCrU = upSample420(YD, CbD, CrD) # 6
+    YCbCrU = upSample420(YD, CbD, CrD) # 6
     
     # showYCbCr(YCbCrU) # 6
 
@@ -158,6 +169,8 @@ def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
     res = comp.all()
     print(res)'''
     
+    RGBAfter = depadding(RGBAfter)  # 4
+    
     # Y_a, Cb_a, Cr_a = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
 
 
@@ -165,6 +178,16 @@ def joinRGB(R, G, B): # 3.4
     RGB = np.dstack((R, G, B))
 
     return RGB
+
+
+def depadding(RGBAfter): # 4
+    R, G, B = separateRGB(RGBAfter)
+
+    R = np.resize(R, (h, w))
+    G = np.resize(G, (h, w))
+    B = np.resize(B, (h, w))
+
+    return joinRGB(R, G, B)
 
 
 def YCbCrtoRGB(YCbCr): # 5
@@ -188,6 +211,10 @@ def upSample422(YD, CbD, CrD): # 6
     
     CrU = np.repeat(CrD, 2, axis=1)
 
+    if np.shape(YD)[0] % 2 != 0:
+        CbU = np.delete(CbU, -1, 0)
+        CrU = np.delete(CrU, -1, 0)
+
     YCbCrU = np.dstack((YD, CbU, CrU))
 
     return YCbCrU
@@ -198,6 +225,14 @@ def upSample420(YD, CbD, CrD): # 6
     CbU = np.repeat(CbU, 2, axis=0)
     CrU = np.repeat(CrD, 2, axis=1)
     CrU = np.repeat(CrU, 2, axis=0)
+
+    if np.shape(YD)[0] % 2 != 0:
+        CbU = np.delete(CbU, -1, 0)
+        CrU = np.delete(CrU, -1, 0)
+
+    if np.shape(YD)[1] % 2 != 0:
+        CbU = np.delete(CbU, -1, 1)
+        CrU = np.delete(CrU, -1, 1)
 
     YCbCrU = np.dstack((YD, CbU, CrU))
 
