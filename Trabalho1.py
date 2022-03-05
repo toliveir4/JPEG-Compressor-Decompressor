@@ -5,7 +5,8 @@ from scipy.fftpack import dct, idct
 
 
 def encoder(): # 2
-    img = plt.imread('imagens/barn_mountains.bmp') # 3.1
+    img_name = str(input("Image name: "))
+    img = plt.imread(f'imagens/{img_name}.bmp') # 3.1
 
     '''plt.figure()
     plt.imshow(img)'''
@@ -18,15 +19,14 @@ def encoder(): # 2
 
     R, G, B = separateRGB(img) # 3.4
 
-    # viewChanels(R, G, B) # 3.5
+    #viewChanels(R, G, B) # 3.5
     
     YCbCr = RGBtoYCbCr(R, G, B) # 5
 
     # showYCbCr(YCbCr) # 5
 
-    YD, CbD, CrD = downSample422(YCbCr) # 6
-
-    # YD, CbD, CrD = downSample420(YCbCr) # 6
+    # YD, CbD, CrD = downSample422(YCbCr) # 6
+    YD, CbD, CrD = downSample420(YCbCr) # 6
 
     """plt.figure()
     plt.imshow(YD, cmGray)
@@ -40,19 +40,18 @@ def encoder(): # 2
     Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
 
     
-    #7.1.2
-    plt.figure()
+    """#7.1.2
+    fig = plt.figure(figsize=(10, 10))
+    fig.add_subplot(131)
     plt.imshow(np.log(abs(Y_dct) + 0.0001))
-    plt.colorbar()
-    plt.figure()
+    fig.add_subplot(132)
     plt.imshow(np.log(abs(Cb_dct) + 0.0001))
-    plt.colorbar()
-    plt.figure()
+    fig.add_subplot(133)
     plt.imshow(np.log(abs(Cr_dct) + 0.0001))
-    plt.colorbar()
+    plt.colorbar()"""
     
 
-    return R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct
+    return Y_dct, Cb_dct, Cr_dct
 
 
 def getColormap(): # 3.2
@@ -153,14 +152,17 @@ def calcDCT(YD, CbD, CrD): # 7.1
     return Y_dct, Cb_dct, Cr_dct
 
 
-def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
-    YCbCrU = upSample422(YD, CbD, CrD) # 6
+def decoder(Y_dct, Cb_dct, Cr_dct): # 2
+    Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
 
-    # YCbCrU = upSample420(YD, CbD, CrD) # 6
-    
+    # YCbCrU = upSample422(Y_enc, Cb_enc, Cr_enc) # 6
+
+    YCbCrU = upSample420(Y_enc, Cb_enc, Cr_enc) # 6
+
     # showYCbCr(YCbCrU) # 6
 
     RGBAfter = YCbCrtoRGB(YCbCrU) # 5
+    
     # RGBBefore = joinRGB(R, G, B) # 3.4
     
     '''plt.figure()
@@ -170,9 +172,12 @@ def decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct): # 2
     res = comp.all()
     print(res)'''
     
-    RGBAfter = depadding(RGBAfter)  # 4
+    RGBAfter = unpadding(RGBAfter)  # 4
     
-    # Y_a, Cb_a, Cr_a = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
+    plt.figure()
+    plt.title("Imagem reconstruida")
+    plt.imshow(RGBAfter)
+    plt.axis('off')
 
 
 def joinRGB(R, G, B): # 3.4
@@ -181,12 +186,12 @@ def joinRGB(R, G, B): # 3.4
     return RGB
 
 
-def depadding(RGBAfter): # 4
+def unpadding(RGBAfter): # 4
     R, G, B = separateRGB(RGBAfter)
-
-    R = np.resize(R, (h, w))
-    G = np.resize(G, (h, w))
-    B = np.resize(B, (h, w))
+    
+    R = R[:h, :w]
+    G = G[:h, :w]
+    B = B[:h, :w]
 
     return joinRGB(R, G, B)
 
@@ -262,8 +267,8 @@ def calcIDCT(Y_dct, Cb_dct, Cr_dct):
 def main():
     plt.close('all')
 
-    R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct = encoder()
-    decoder(R, G, B, YD, CbD, CrD, Y_dct, Cb_dct, Cr_dct)
+    Y_dct, Cb_dct, Cr_dct = encoder()
+    decoder(Y_dct, Cb_dct, Cr_dct)
 
     plt.show()
 
