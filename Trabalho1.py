@@ -6,6 +6,7 @@ from scipy.fftpack import dct, idct
 
 def encoder(): # 2
     img_name = str(input("Image name: "))
+    dSample = int(input("Downsample: "))
     img = plt.imread(f'imagens/{img_name}.bmp') # 3.1
 
     '''plt.figure()
@@ -19,39 +20,49 @@ def encoder(): # 2
 
     R, G, B = separateRGB(img) # 3.4
 
-    #viewChanels(R, G, B) # 3.5
+    # viewChanels(R, G, B) # 3.5
     
     YCbCr = RGBtoYCbCr(R, G, B) # 5
 
-    # showYCbCr(YCbCr) # 5
+    showYCbCr(YCbCr) # 5
 
     # YD, CbD, CrD = downSample422(YCbCr) # 6
-    YD, CbD, CrD = downSample420(YCbCr) # 6
+    # YD, CbD, CrD = downSample420(YCbCr) # 6
+    YD, CbD, CrD = downSample(YCbCr, dSample)
 
-    """plt.figure()
+    """fig = plt.figure(figsize=(10, 5))
+    plt.title("YCbCr")
+    plt.axis("off")
+    fig.add_subplot(131)
+    plt.title("Y")
     plt.imshow(YD, cmGray)
-    
-    plt.figure()
+    fig.add_subplot(132)
+    plt.title("Cb")
     plt.imshow(CbD, cmGray)
-    
-    plt.figure()
+    fig.add_subplot(133)
+    plt.title("Cr")
     plt.imshow(CrD, cmGray)"""
 
     Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
 
     
     """#7.1.2
-    fig = plt.figure(figsize=(10, 10))
-    fig.add_subplot(131)
+    fig = plt.figure(figsize=(12, 5))
+    fig.add_subplot(141)
+    plt.title("Y_DCT")
     plt.imshow(np.log(abs(Y_dct) + 0.0001))
-    fig.add_subplot(132)
+    fig.add_subplot(142)
+    plt.title("Cb_DCT")
     plt.imshow(np.log(abs(Cb_dct) + 0.0001))
-    fig.add_subplot(133)
+    fig.add_subplot(143)
+    plt.title("Cr_DCT")
     plt.imshow(np.log(abs(Cr_dct) + 0.0001))
+    fig.add_subplot(144)
+    plt.axis("off")
     plt.colorbar()"""
     
 
-    return Y_dct, Cb_dct, Cr_dct
+    return Y_dct, Cb_dct, Cr_dct, dSample
 
 
 def getColormap(): # 3.2
@@ -67,13 +78,15 @@ def viewColormap(cm, img): # 3.3
 
 
 def viewChanels(R, G, B): # 3.5
-    plt.figure()
+    fig = plt.figure(figsize=(10, 5))
+    fig.add_subplot(131)
+    plt.title("Red")
     plt.imshow(R, cmr)
-    
-    plt.figure()
+    fig.add_subplot(132)
+    plt.title("Green")
     plt.imshow(G, cmg)
-    
-    plt.figure()
+    fig.add_subplot(133)
+    plt.title("Blue")
     plt.imshow(B, cmb)
 
 
@@ -124,6 +137,19 @@ def separateYCbCr(YCbCr):
     return Y, Cb, Cr
 
 
+def downSample(YCbCr, dSample): # 6
+    Y, Cb, Cr = separateYCbCr(YCbCr)
+
+    Cb = Cb[:, ::2]
+    Cr = Cr[:, ::2]
+
+    if(dSample == 420):
+        Cb = Cb[::2, :]
+        Cr = Cr[::2, :]
+
+    return Y, Cb, Cr
+
+"""
 def downSample422(YCbCr): # 6
     Y, Cb, Cr = separateYCbCr(YCbCr)
 
@@ -142,7 +168,7 @@ def downSample420(YCbCr): # 6
     Cr = Cr[::2, :]
 
     return Y, Cb, Cr
-
+"""
 
 def calcDCT(YD, CbD, CrD): # 7.1
     Y_dct = dct(dct(YD, norm='ortho').T, norm='ortho').T
@@ -152,12 +178,14 @@ def calcDCT(YD, CbD, CrD): # 7.1
     return Y_dct, Cb_dct, Cr_dct
 
 
-def decoder(Y_dct, Cb_dct, Cr_dct): # 2
+def decoder(Y_dct, Cb_dct, Cr_dct, dSample): # 2
     Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
 
     # YCbCrU = upSample422(Y_enc, Cb_enc, Cr_enc) # 6
 
-    YCbCrU = upSample420(Y_enc, Cb_enc, Cr_enc) # 6
+    # YCbCrU = upSample420(Y_enc, Cb_enc, Cr_enc) # 6
+
+    YCbCrU = upSample(Y_enc, Cb_enc, Cr_enc, dSample)
 
     # showYCbCr(YCbCrU) # 6
 
@@ -212,6 +240,29 @@ def YCbCrtoRGB(YCbCr): # 5
     return RGB
 
 
+def upSample(YD, CbD, CrD, dSample): # 6
+    CbU = np.repeat(CbD, 2, axis=1)
+    CrU = np.repeat(CrD, 2, axis=1)
+    
+
+    if np.shape(YD)[0] % 2 != 0:
+        CbU = np.delete(CbU, -1, 0)
+        CrU = np.delete(CrU, -1, 0)
+
+    if dSample == 420:
+        CbU = np.repeat(CbU, 2, axis=0)
+        CrU = np.repeat(CrU, 2, axis=0)
+
+        if np.shape(YD)[1] % 2 != 0:
+            CbU = np.delete(CbU, -1, 1)
+            CrU = np.delete(CrU, -1, 1)
+
+    YCbCrU = np.dstack((YD, CbU, CrU))
+
+    return YCbCrU
+
+
+"""
 def upSample422(YD, CbD, CrD): # 6
     CbU = np.repeat(CbD, 2, axis=1)
     
@@ -243,16 +294,22 @@ def upSample420(YD, CbD, CrD): # 6
     YCbCrU = np.dstack((YD, CbU, CrU))
 
     return YCbCrU
-
+"""
 
 def showYCbCr(YCbCr): # 5
     Y, Cb, Cr = separateYCbCr(YCbCr)
 
-    plt.figure()
+    fig = plt.figure(figsize=(10, 5))
+    plt.title("YCbCr")
+    plt.axis("off")
+    fig.add_subplot(131)
+    plt.title("Y")
     plt.imshow(Y, cmGray)
-    plt.figure()
+    fig.add_subplot(132)
+    plt.title("Cb")
     plt.imshow(Cb, cmGray)
-    plt.figure()
+    fig.add_subplot(133)
+    plt.title("Cr")
     plt.imshow(Cr, cmGray)
 
 
@@ -267,8 +324,8 @@ def calcIDCT(Y_dct, Cb_dct, Cr_dct):
 def main():
     plt.close('all')
 
-    Y_dct, Cb_dct, Cr_dct = encoder()
-    decoder(Y_dct, Cb_dct, Cr_dct)
+    Y_dct, Cb_dct, Cr_dct, dSample = encoder()
+    decoder(Y_dct, Cb_dct, Cr_dct, dSample)
 
     plt.show()
 
