@@ -26,41 +26,13 @@ def encoder(): # 2
 
     showYCbCr(YCbCr) # 5
 
-    # YD, CbD, CrD = downSample422(YCbCr) # 6
-    # YD, CbD, CrD = downSample420(YCbCr) # 6
-    YD, CbD, CrD = downSample(YCbCr, dSample)
+    YD, CbD, CrD = downSample(YCbCr, dSample) # 6
 
-    """fig = plt.figure(figsize=(10, 5))
-    plt.title("YCbCr")
-    plt.axis("off")
-    fig.add_subplot(131)
-    plt.title("Y")
-    plt.imshow(YD, cmGray)
-    fig.add_subplot(132)
-    plt.title("Cb")
-    plt.imshow(CbD, cmGray)
-    fig.add_subplot(133)
-    plt.title("Cr")
-    plt.imshow(CrD, cmGray)"""
+    # showDownSample(YD, CbD, CrD) # 6
 
     Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
 
-    
-    """#7.1.2
-    fig = plt.figure(figsize=(12, 5))
-    fig.add_subplot(141)
-    plt.title("Y_DCT")
-    plt.imshow(np.log(abs(Y_dct) + 0.0001))
-    fig.add_subplot(142)
-    plt.title("Cb_DCT")
-    plt.imshow(np.log(abs(Cb_dct) + 0.0001))
-    fig.add_subplot(143)
-    plt.title("Cr_DCT")
-    plt.imshow(np.log(abs(Cr_dct) + 0.0001))
-    fig.add_subplot(144)
-    plt.axis("off")
-    plt.colorbar()"""
-    
+    # showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
 
     return Y_dct, Cb_dct, Cr_dct, dSample
 
@@ -149,26 +121,21 @@ def downSample(YCbCr, dSample): # 6
 
     return Y, Cb, Cr
 
-"""
-def downSample422(YCbCr): # 6
-    Y, Cb, Cr = separateYCbCr(YCbCr)
 
-    Cb = Cb[:, ::2]
-    Cr = Cr[:, ::2]
+def showDownSample(YD, CbD, CrD): # 6
+    fig = plt.figure(figsize=(10, 5))
+    plt.title("YCbCr")
+    plt.axis("off")
+    fig.add_subplot(131)
+    plt.title("Y")
+    plt.imshow(YD, cmGray)
+    fig.add_subplot(132)
+    plt.title("Cb Downsampled")
+    plt.imshow(CbD, cmGray)
+    fig.add_subplot(133)
+    plt.title("Cr Downsampled")
+    plt.imshow(CrD, cmGray)
 
-    return Y, Cb, Cr
-
-
-def downSample420(YCbCr): # 6
-    Y, Cb, Cr = separateYCbCr(YCbCr)
-
-    Cb = Cb[:, ::2]
-    Cb = Cb[::2, :]
-    Cr = Cr[:, ::2]
-    Cr = Cr[::2, :]
-
-    return Y, Cb, Cr
-"""
 
 def calcDCT(YD, CbD, CrD): # 7.1
     Y_dct = dct(dct(YD, norm='ortho').T, norm='ortho').T
@@ -178,14 +145,26 @@ def calcDCT(YD, CbD, CrD): # 7.1
     return Y_dct, Cb_dct, Cr_dct
 
 
+def showDCT(Y_dct, Cb_dct, Cr_dct): # 7.1.2
+    fig = plt.figure(figsize=(12, 5))
+    fig.add_subplot(141)
+    plt.title("Y_DCT")
+    plt.imshow(np.log(abs(Y_dct) + 0.0001), cmGray)
+    fig.add_subplot(142)
+    plt.title("Cb_DCT")
+    plt.imshow(np.log(abs(Cb_dct) + 0.0001), cmGray)
+    fig.add_subplot(143)
+    plt.title("Cr_DCT")
+    plt.imshow(np.log(abs(Cr_dct) + 0.0001), cmGray)
+    fig.add_subplot(144)
+    plt.axis("off")
+    plt.colorbar()
+
+
 def decoder(Y_dct, Cb_dct, Cr_dct, dSample): # 2
     Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
 
-    # YCbCrU = upSample422(Y_enc, Cb_enc, Cr_enc) # 6
-
-    # YCbCrU = upSample420(Y_enc, Cb_enc, Cr_enc) # 6
-
-    YCbCrU = upSample(Y_enc, Cb_enc, Cr_enc, dSample)
+    YCbCrU = upSample(Y_enc, Cb_enc, Cr_enc, dSample) # 6
 
     # showYCbCr(YCbCrU) # 6
 
@@ -261,40 +240,6 @@ def upSample(YD, CbD, CrD, dSample): # 6
 
     return YCbCrU
 
-
-"""
-def upSample422(YD, CbD, CrD): # 6
-    CbU = np.repeat(CbD, 2, axis=1)
-    
-    CrU = np.repeat(CrD, 2, axis=1)
-
-    if np.shape(YD)[0] % 2 != 0:
-        CbU = np.delete(CbU, -1, 0)
-        CrU = np.delete(CrU, -1, 0)
-
-    YCbCrU = np.dstack((YD, CbU, CrU))
-
-    return YCbCrU
-
-
-def upSample420(YD, CbD, CrD): # 6
-    CbU = np.repeat(CbD, 2, axis=1)
-    CbU = np.repeat(CbU, 2, axis=0)
-    CrU = np.repeat(CrD, 2, axis=1)
-    CrU = np.repeat(CrU, 2, axis=0)
-
-    if np.shape(YD)[0] % 2 != 0:
-        CbU = np.delete(CbU, -1, 0)
-        CrU = np.delete(CrU, -1, 0)
-
-    if np.shape(YD)[1] % 2 != 0:
-        CbU = np.delete(CbU, -1, 1)
-        CrU = np.delete(CrU, -1, 1)
-
-    YCbCrU = np.dstack((YD, CbU, CrU))
-
-    return YCbCrU
-"""
 
 def showYCbCr(YCbCr): # 5
     Y, Cb, Cr = separateYCbCr(YCbCr)
