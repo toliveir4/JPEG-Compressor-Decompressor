@@ -10,7 +10,8 @@ def encoder(): # 2
     img = plt.imread(f'imagens/{img_name}.bmp') # 3.1
 
     '''plt.figure()
-    plt.imshow(img)'''
+    plt.imshow(img)
+    plt.axis('off')'''
 
     # cm = getColormap() # 3.2
 
@@ -24,14 +25,14 @@ def encoder(): # 2
     
     YCbCr = RGBtoYCbCr(R, G, B) # 5
 
-    showYCbCr(YCbCr) # 5
+    # showYCbCr(YCbCr) # 5
 
     YD, CbD, CrD = downSample(YCbCr, dSample) # 6
 
     # showDownSample(YD, CbD, CrD) # 6
 
-    Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
-
+    # Y_dct, Cb_dct, Cr_dct = calcDCT(YD, CbD, CrD) # 7.1
+    Y_dct, Cb_dct, Cr_dct = calcDCT_8x8_64x64(YD, CbD, CrD, option=8) # 7.2 and 7.3
     # showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
 
     return Y_dct, Cb_dct, Cr_dct, dSample
@@ -145,25 +146,55 @@ def calcDCT(YD, CbD, CrD): # 7.1
     return Y_dct, Cb_dct, Cr_dct
 
 
+def calcDCT_8x8_64x64(YD, CbD, CrD, option): # 7.2 and 7.3
+    if option == 8 or option == 64:
+        Y_lines, Y_cols = np.shape(YD) 
+        Cb_lines, Cb_cols = np.shape(CbD)
+
+        Yx = Y_lines // option
+        Yy = Y_cols // option
+        Cx = Cb_lines // option
+        Cy = Cb_cols // option
+
+        Y_sliced = YD.reshape(Yx * Yy, option, option)
+        Cb_sliced = CbD.reshape(Cx * Cy, option, option)
+        Cr_sliced = CrD.reshape(Cx * Cy, option, option)
+
+        i = 0
+        for i in range(len(Y_sliced)):
+            Y_sliced[i] = dct(dct(Y_sliced[i], norm="ortho").T, norm="ortho").T
+            i += 1
+
+        i = 0
+        for i in range(len(Cb_sliced)):
+            Cb_sliced[i] = dct(dct(Cb_sliced[i], norm="ortho").T, norm="ortho").T
+            Cr_sliced[i] = dct(dct(Cr_sliced[i], norm="ortho").T, norm="ortho").T
+            i += 1
+        
+        Y_dct = Y_sliced.reshape(Y_lines, Y_cols)
+        Cb_dct = Cb_sliced.reshape(Cb_lines, Cb_cols)
+        Cr_dct = Cr_sliced.reshape(Cb_lines, Cb_cols)
+    
+    return Y_dct, Cb_dct, Cr_dct
+
+
 def showDCT(Y_dct, Cb_dct, Cr_dct): # 7.1.2
     fig = plt.figure(figsize=(12, 5))
-    fig.add_subplot(141)
+    fig.add_subplot(131)
     plt.title("Y_DCT")
     plt.imshow(np.log(abs(Y_dct) + 0.0001), cmGray)
-    fig.add_subplot(142)
+    fig.add_subplot(132)
     plt.title("Cb_DCT")
     plt.imshow(np.log(abs(Cb_dct) + 0.0001), cmGray)
-    fig.add_subplot(143)
+    fig.add_subplot(133)
     plt.title("Cr_DCT")
     plt.imshow(np.log(abs(Cr_dct) + 0.0001), cmGray)
-    fig.add_subplot(144)
-    plt.axis("off")
-    plt.colorbar()
 
 
 def decoder(Y_dct, Cb_dct, Cr_dct, dSample): # 2
-    Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
-
+    # Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
+    Y_enc, Cb_enc, Cr_enc = calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct, option=8) # 7.2 and 7.3
+    
     YCbCrU = upSample(Y_enc, Cb_enc, Cr_enc, dSample) # 6
 
     # showYCbCr(YCbCrU) # 6
@@ -262,6 +293,38 @@ def calcIDCT(Y_dct, Cb_dct, Cr_dct):
     Y = idct(idct(Y_dct, norm='ortho').T, norm='ortho').T
     Cb = idct(idct(Cb_dct, norm='ortho').T, norm='ortho').T
     Cr = idct(idct(Cr_dct, norm='ortho').T, norm='ortho').T
+    
+    return Y, Cb, Cr
+
+
+def calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct, option): # 7.2 and 7.3
+    if option == 8 or option == 64:
+        Y_lines, Y_cols = np.shape(Y_dct) 
+        Cb_lines, Cb_cols = np.shape(Cb_dct)
+
+        Yx = Y_lines // option
+        Yy = Y_cols // option
+        Cx = Cb_lines // option
+        Cy = Cb_cols // option
+
+        Y_sliced = Y_dct.reshape(Yx * Yy, option, option)
+        Cb_sliced = Cb_dct.reshape(Cx * Cy, option, option)
+        Cr_sliced = Cr_dct.reshape(Cx * Cy, option, option)
+
+        i = 0
+        for i in range(len(Y_sliced)):
+            Y_sliced[i] = idct(idct(Y_sliced[i], norm="ortho").T, norm="ortho").T
+            i += 1
+
+        i = 0
+        for i in range(len(Cb_sliced)):
+            Cb_sliced[i] = idct(idct(Cb_sliced[i], norm="ortho").T, norm="ortho").T
+            Cr_sliced[i] = idct(idct(Cr_sliced[i], norm="ortho").T, norm="ortho").T
+            i += 1
+        
+        Y = Y_sliced.reshape(Y_lines, Y_cols)
+        Cb = Cb_sliced.reshape(Cb_lines, Cb_cols)
+        Cr = Cr_sliced.reshape(Cb_lines, Cb_cols)
     
     return Y, Cb, Cr
 
