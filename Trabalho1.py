@@ -190,6 +190,28 @@ def showDCT(Y_dct, Cb_dct, Cr_dct): # 7.1.2
     plt.title("Cr_DCT")
     plt.imshow(np.log(abs(Cr_dct) + 0.0001), cmGray)
 
+    
+def getQuantizationMatrix(requiredQuality=50):      # 8
+    qm = np.array([[16, 11, 10, 16, 24, 40, 51, 61],
+                  [12, 12, 14, 19, 26, 58, 60, 55],
+                  [14, 13, 16, 24, 40, 57, 69, 56],
+                  [14, 17, 22, 29, 51, 87, 80, 62],
+                  [18, 22, 37, 56, 68, 109, 103, 77],
+                  [24, 35, 55, 64, 81, 104, 113, 92],
+                  [49, 64, 78, 87, 103, 121, 120, 101],
+                  [72, 92, 95, 98, 112, 100, 103, 99]])
+
+    if requiredQuality == 50:
+        return qm
+    elif requiredQuality > 50:
+        qm = (qm * ((100 - requiredQuality) / 50)).astype('int')
+        qm = np.where(qm > 255, 255, qm)
+        return qm
+    else:
+        qm = (qm * (50 / requiredQuality)).astype('int')
+        qm = np.where(qm > 255, 255, qm)
+        return qm
+    
 
 def decoder(Y_dct, Cb_dct, Cr_dct, dSample): # 2
     # Y_enc, Cb_enc, Cr_enc = calcIDCT(Y_dct, Cb_dct, Cr_dct) # 7.1
