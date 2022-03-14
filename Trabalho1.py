@@ -5,11 +5,11 @@ from scipy.fftpack import dct, idct
 
 
 def encoder():  # 2
-    img_name = str(input("Image name: "))
+    img_name = "barn_mountains"
 
     global dSample, opt
-    dSample = int(input("Downsample: "))
-    opt = int(input("DCT block size: "))
+    dSample = 420
+    opt = 8
 
     img = plt.imread(f'imagens/{img_name}.bmp')  # 3.1
 
@@ -36,11 +36,13 @@ def encoder():  # 2
     # showDownSample(YD, CbD, CrD) # 6
 
     Y_dct, Cb_dct, Cr_dct = calcDCT_8x8_64x64(YD, CbD, CrD)  # 7
-    showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
+    # showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
 
     Y_Q, Cb_Q, Cr_Q = quantization(Y_dct, Cb_dct, Cr_dct) # 8
 
-    return Y_Q, Cb_Q, Cr_Q
+    Y_dcpm, Cb_dcpm, Cr_dcpm = DCPM(Y_Q, Cb_Q, Cr_Q) # 9
+
+    return Y_dcpm, Cb_dcpm, Cr_dcpm
 
 
 def getColormap():  # 3.2
@@ -106,7 +108,7 @@ def RGBtoYCbCr(R, G, B):  # 5
 
     RGB = joinRGB(R, G, B)
 
-    YCbCr = RGB.dot(matrix)
+    YCbCr = RGB.dot(matrix.T)
     YCbCr[:, :, [1, 2]] += 128
 
     return YCbCr
@@ -118,6 +120,23 @@ def separateYCbCr(YCbCr):
     Cr = YCbCr[:, :, 2]
 
     return Y, Cb, Cr
+
+
+def showYCbCr(YCbCr):  # 5
+    Y, Cb, Cr = separateYCbCr(YCbCr)
+
+    fig = plt.figure(figsize=(10, 5))
+    plt.title("YCbCr")
+    plt.axis("off")
+    fig.add_subplot(131)
+    plt.title("Y")
+    plt.imshow(Y, cmGray)
+    fig.add_subplot(132)
+    plt.title("Cb")
+    plt.imshow(Cb, cmGray)
+    fig.add_subplot(133)
+    plt.title("Cr")
+    plt.imshow(Cr, cmGray)
 
 
 def downSample(YCbCr, dSample):  # 6
@@ -208,18 +227,22 @@ def getQuantizationMatrix(requiredQuality=50):      # 8
     if requiredQuality == 50:
         return Q_Y, Q_CbCr
     elif requiredQuality > 50:
-        Q_Y = (Q_Y * ((100 - requiredQuality) / 50)).astype(np.uint8)
+        Q_Y = (Q_Y * ((100 - requiredQuality) / 50)).round()
         Q_Y[Q_Y > 255] = 255
+        Q_Y = Q_Y.astype(np.uint8)
 
-        Q_CbCr = (Q_CbCr * ((100 - requiredQuality) / 50)).astype(np.uint8)
+        Q_CbCr = (Q_CbCr * ((100 - requiredQuality) / 50)).round()
         Q_CbCr[Q_CbCr > 255] = 255
+        Q_CbCr = Q_CbCr.astype(np.uint8)
         return Q_Y, Q_CbCr
     else:
-        Q_Y = (Q_Y * (50 / requiredQuality)).astype(np.uint8)
+        Q_Y = (Q_Y * (50 / requiredQuality)).round()
         Q_Y[Q_Y > 255] = 255
+        Q_Y = Q_Y.astype(np.uint8)
 
-        Q_CbCr = (Q_CbCr * (50 / requiredQuality)).astype(np.uint8)
+        Q_CbCr = (Q_CbCr * (50 / requiredQuality)).round()
         Q_CbCr[Q_CbCr > 255] = 255
+        Q_CbCr = Q_CbCr.astype(np.uint8)
         return Q_Y, Q_CbCr
 
 
@@ -229,19 +252,53 @@ def quantization(Y_dct, Cb_dct, Cr_dct):    # 8
     Y_lines, Y_cols = np.shape(Y_dct)
     Cb_lines, Cb_cols = np.shape(Cb_dct)
 
+    YQ , CbQ, CrQ = Y_dct, Cb_dct, Cr_dct
+
     for i in range(0, Y_lines, opt):
         for j in range(0, Y_cols, opt):
-            Y_dct[i:i + opt, j:j + opt] = np.round(Y_dct[i:i + opt, j:j + opt] / Q_Y)
-                
+            YQ[i:i + opt, j:j + opt] = np.round(YQ[i:i + opt, j:j + opt] / Q_Y)
+            
     for i in range(0, Cb_lines, opt):
         for j in range(0, Cb_cols, opt):
-            Cb_dct[i:i + opt, j:j + opt] = np.round(Cb_dct[i:i + opt, j:j + opt] / Q_CbCr)
-            Cr_dct[i:i + opt, j:j + opt] = np.round(Cr_dct[i:i + opt, j:j + opt] / Q_CbCr)
+            CbQ[i:i + opt, j:j + opt] = np.round(CbQ[i:i + opt, j:j + opt] / Q_CbCr)
+            CrQ[i:i + opt, j:j + opt] = np.round(CrQ[i:i + opt, j:j + opt] / Q_CbCr)
 
-    return Y_dct, Cb_dct, Cr_dct
+    return YQ, CbQ, CrQ
 
 
-def decoder(Y_Q, Cb_Q, Cr_Q):  # 2
+def DCPM(YQ, CbQ, CrQ): # 9
+    Y_lines, Y_cols = np.shape(YQ)
+    C_lines, C_cols = np.shape(CbQ)
+
+    dcY0 = YQ[0, 0]
+    dcCb0 = CbQ[0, 0]
+    dcCr0 = CrQ[0, 0]
+
+    for i in range(8, Y_lines, 8):
+        for j in range(8, Y_cols, 8):
+            dcY = YQ[i, j]
+            diffY = dcY - dcY0
+            YQ[i, j] = diffY
+            dcY0 = dcY
+            if i < C_lines and j < C_cols:
+                dcCb = CbQ[i, j]
+                dcCr = CrQ[i, j]
+
+                diffCb = dcCb - dcCb0
+                diffCr = dcCr - dcCr0
+
+                CbQ[i, j] = diffCb
+                CrQ[i, j] = diffCr
+
+                dcCb0 = dcCb
+                dcCr0 = dcCr
+
+    return YQ, CbQ, CrQ
+
+
+def decoder(Y_dcpm, Cb_dcpm, Cr_dcpm):  # 2
+    Y_Q, Cb_Q, Cr_Q = IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm)
+
     Y_dct, Cb_dct, Cr_dct = deQuantization(Y_Q, Cb_Q, Cr_Q) # 8
 
     Y_enc, Cb_enc, Cr_enc = calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct)  # 7
@@ -268,75 +325,57 @@ def decoder(Y_Q, Cb_Q, Cr_Q):  # 2
     plt.imshow(RGBAfter)
     plt.axis('off')
 
+def IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm): # 9
+    Y_lines, Y_cols = np.shape(Y_dcpm)
+    C_lines, C_cols = np.shape(Cb_dcpm)
 
-def joinRGB(R, G, B):  # 3.4
-    RGB = np.dstack((R, G, B))
+    YQ , CbQ, CrQ = Y_dcpm, Cb_dcpm, Cr_dcpm
 
-    return RGB
+    dcY0 = YQ[0, 0]
+    dcCb0 = CbQ[0, 0]
+    dcCr0 = CrQ[0, 0]
 
+    for i in range(8, Y_lines, 8):
+        for j in range(8, Y_cols, 8):
+            dcY = YQ[i, j]
+            diffY = dcY + dcY0
+            YQ[i, j] = diffY
+            dcY0 = dcY
 
-def unpadding(RGBAfter):  # 4
-    R, G, B = separateRGB(RGBAfter)
+            if i < C_lines and j < C_cols:
+                dcCb = CbQ[i, j]
+                dcCr = CrQ[i, j]
 
-    R = R[:h, :w]
-    G = G[:h, :w]
-    B = B[:h, :w]
+                diffCb = dcCb + dcCb0
+                diffCr = dcCr + dcCr0
 
-    return joinRGB(R, G, B)
+                CbQ[i, j] = diffCb
+                CrQ[i, j] = diffCr
 
+                dcCb0 = dcCb
+                dcCr0 = dcCr
 
-def YCbCrtoRGB(YCbCr):  # 5
-    matrix = np.array([[0.299, 0.587, 0.114],
-                       [-0.168736, -0.331264, 0.5],
-                       [0.5, -0.418688, -0.081312]])
-
-    inverted = np.linalg.inv(matrix)
-    YCbCr[:, :, [1, 2]] -= 128
-    RGB = YCbCr.dot(inverted)
-    RGB = RGB.round()
-    RGB[RGB > 255] = 255
-    RGB[RGB < 0] = 0
-    RGB = RGB.astype(np.uint8)
-
-    return RGB
-
-
-def upSample(YD, CbD, CrD, dSample):  # 6
-    CbU = np.repeat(CbD, 2, axis=1)
-    CrU = np.repeat(CrD, 2, axis=1)
-
-    if np.shape(YD)[0] % 2 != 0:
-        CbU = np.delete(CbU, -1, 0)
-        CrU = np.delete(CrU, -1, 0)
-
-    if dSample == 420:
-        CbU = np.repeat(CbU, 2, axis=0)
-        CrU = np.repeat(CrU, 2, axis=0)
-
-        if np.shape(YD)[1] % 2 != 0:
-            CbU = np.delete(CbU, -1, 1)
-            CrU = np.delete(CrU, -1, 1)
-
-    YCbCrU = np.dstack((YD, CbU, CrU))
-
-    return YCbCrU
+    return YQ, CbQ, CrQ
 
 
-def showYCbCr(YCbCr):  # 5
-    Y, Cb, Cr = separateYCbCr(YCbCr)
+def deQuantization(Y_Q, Cb_Q, Cr_Q):    # 8
+    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=75)
 
-    fig = plt.figure(figsize=(10, 5))
-    plt.title("YCbCr")
-    plt.axis("off")
-    fig.add_subplot(131)
-    plt.title("Y")
-    plt.imshow(Y, cmGray)
-    fig.add_subplot(132)
-    plt.title("Cb")
-    plt.imshow(Cb, cmGray)
-    fig.add_subplot(133)
-    plt.title("Cr")
-    plt.imshow(Cr, cmGray)
+    Y_lines, Y_cols = np.shape(Y_Q)
+    Cb_lines, Cb_cols = np.shape(Cb_Q)
+
+    Y_dct, Cb_dct, Cr_dct = Y_Q, Cb_Q, Cr_Q
+
+    for i in range(0, Y_lines, opt):
+        for j in range(0, Y_cols, opt):
+            Y_dct[i:i + opt, j:j + opt] = Y_dct[i:i + opt, j:j + opt] * Q_Y
+                
+    for i in range(0, Cb_lines, opt):
+        for j in range(0, Cb_cols, opt):
+            Cb_dct[i:i + opt, j:j + opt] = Cb_dct[i:i + opt, j:j + opt] * Q_CbCr
+            Cr_dct[i:i + opt, j:j + opt] = Cr_dct[i:i + opt, j:j + opt] * Q_CbCr
+    
+    return Y_dct, Cb_dct, Cr_dct
 
 
 def calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct):  # 7
@@ -365,29 +404,64 @@ def calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct):  # 7
     return Y, Cb, Cr
 
 
-def deQuantization(Y_Q, Cb_Q, Cr_Q):    # 8
-    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=75)
+def upSample(YD, CbD, CrD, dSample):  # 6
+    CbU = np.repeat(CbD, 2, axis=1)
+    CrU = np.repeat(CrD, 2, axis=1)
 
-    Y_lines, Y_cols = np.shape(Y_Q)
-    Cb_lines, Cb_cols = np.shape(Cb_Q)
+    if np.shape(YD)[0] % 2 != 0:
+        CbU = np.delete(CbU, -1, 0)
+        CrU = np.delete(CrU, -1, 0)
 
-    for i in range(0, Y_lines, opt):
-        for j in range(0, Y_cols, opt):
-            Y_Q[i:i + opt, j:j + opt] = np.round(Y_Q[i:i + opt, j:j + opt] * Q_Y)
-                
-    for i in range(0, Cb_lines, opt):
-        for j in range(0, Cb_cols, opt):
-            Cb_Q[i:i + opt, j:j + opt] = np.round(Cb_Q[i:i + opt, j:j + opt] * Q_CbCr)
-            Cr_Q[i:i + opt, j:j + opt] = np.round(Cr_Q[i:i + opt, j:j + opt] * Q_CbCr)
-    
-    return Y_Q, Cb_Q, Cr_Q
+    if dSample == 420:
+        CbU = np.repeat(CbU, 2, axis=0)
+        CrU = np.repeat(CrU, 2, axis=0)
+
+        if np.shape(YD)[1] % 2 != 0:
+            CbU = np.delete(CbU, -1, 1)
+            CrU = np.delete(CrU, -1, 1)
+
+    YCbCrU = np.dstack((YD, CbU, CrU))
+
+    return YCbCrU
+
+
+def YCbCrtoRGB(YCbCr):  # 5
+    matrix = np.array([[0.299, 0.587, 0.114],
+                       [-0.168736, -0.331264, 0.5],
+                       [0.5, -0.418688, -0.081312]])
+
+    inverted = np.linalg.inv(matrix)
+    YCbCr[:, :, [1, 2]] -= 128
+    RGB = YCbCr.dot(inverted.T)
+    RGB = RGB.round()
+    RGB[RGB > 255] = 255
+    RGB[RGB < 0] = 0
+    RGB = RGB.astype(np.uint8)
+
+    return RGB
+
+
+def unpadding(RGBAfter):  # 4
+    R, G, B = separateRGB(RGBAfter)
+
+    R = R[:h, :w]
+    G = G[:h, :w]
+    B = B[:h, :w]
+
+    return joinRGB(R, G, B)
+
+
+def joinRGB(R, G, B):  # 3.4
+    RGB = np.dstack((R, G, B))
+
+    return RGB
 
 
 def main():
     plt.close('all')
 
-    Y_Q, Cb_Q, Cr_Q = encoder()
-    decoder(Y_Q, Cb_Q, Cr_Q)
+    Y_dcpm, Cb_dcpm, Cr_dcpm = encoder()
+    decoder(Y_dcpm, Cb_dcpm, Cr_dcpm)
 
     plt.show()
 
