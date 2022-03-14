@@ -224,8 +224,11 @@ def getQuantizationMatrix(requiredQuality=50):      # 8
                        [99, 99, 99, 99, 99, 99, 99, 99],
                        [99, 99, 99, 99, 99, 99, 99, 99]])
 
-    if requiredQuality == 50:
+    if requiredQuality == 100:
+        Q_Y = np.ones(np.shape(Q_Y))
+        Q_CbCr = np.ones(np.shape(Q_CbCr))
         return Q_Y, Q_CbCr
+
     elif requiredQuality > 50:
         Q_Y = (Q_Y * ((100 - requiredQuality) / 50)).round()
         Q_Y[Q_Y > 255] = 255
@@ -247,7 +250,7 @@ def getQuantizationMatrix(requiredQuality=50):      # 8
 
 
 def quantization(Y_dct, Cb_dct, Cr_dct):    # 8
-    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=75)
+    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=100)
 
     Y_lines, Y_cols = np.shape(Y_dct)
     Cb_lines, Cb_cols = np.shape(Cb_dct)
@@ -359,7 +362,7 @@ def IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm): # 9
 
 
 def deQuantization(Y_Q, Cb_Q, Cr_Q):    # 8
-    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=75)
+    Q_Y, Q_CbCr = getQuantizationMatrix(requiredQuality=100)
 
     Y_lines, Y_cols = np.shape(Y_Q)
     Cb_lines, Cb_cols = np.shape(Cb_Q)
