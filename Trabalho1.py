@@ -328,6 +328,7 @@ def decoder(Y_dcpm, Cb_dcpm, Cr_dcpm):  # 2
     plt.imshow(RGBAfter)
     plt.axis('off')
 
+
 def IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm): # 9
     Y_lines, Y_cols = np.shape(Y_dcpm)
     C_lines, C_cols = np.shape(Cb_dcpm)
@@ -338,25 +339,25 @@ def IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm): # 9
     dcCb0 = CbQ[0, 0]
     dcCr0 = CrQ[0, 0]
 
-    for i in range(8, Y_lines, 8):
-        for j in range(8, Y_cols, 8):
-            dcY = YQ[i, j]
-            diffY = dcY + dcY0
+    for i in range(opt, Y_lines, opt):
+        for j in range(opt, Y_cols, opt):
+            diffY = YQ[i, j]
+            diffY +=  dcY0
             YQ[i, j] = diffY
-            dcY0 = dcY
+            dcY0 = diffY
 
             if i < C_lines and j < C_cols:
-                dcCb = CbQ[i, j]
-                dcCr = CrQ[i, j]
+                diffCb = CbQ[i, j]
+                diffCr = CrQ[i, j]
 
-                diffCb = dcCb + dcCb0
-                diffCr = dcCr + dcCr0
+                diffCb += dcCb0
+                diffCr += dcCr0
 
                 CbQ[i, j] = diffCb
                 CrQ[i, j] = diffCr
 
-                dcCb0 = dcCb
-                dcCr0 = dcCr
+                dcCb0 = diffCb
+                dcCr0 = diffCr
 
     return YQ, CbQ, CrQ
 
