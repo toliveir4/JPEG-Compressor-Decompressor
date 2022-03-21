@@ -16,10 +16,10 @@ def encoder(img):  # 2
     # viewChanels(R, G, B) # 3.5
 
     YCbCr = RGBtoYCbCr(R, G, B)  # 5
+    # showYCbCr(YCbCr) # 5
 
     global YBefore
     YBefore = YCbCr[:, :, 0].copy() # 10
-    # showYCbCr(YCbCr) # 5
 
     YD, CbD, CrD = downSample(YCbCr, dSample)  # 6
     # showDownSample(YD, CbD, CrD) # 6
