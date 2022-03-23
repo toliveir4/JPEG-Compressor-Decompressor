@@ -1,4 +1,4 @@
-import matplotlib.colors as cb_linesr
+import matplotlib.colors as c
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import dct, idct
@@ -58,7 +58,7 @@ def decoder(Y_dcpm, Cb_dcpm, Cr_dcpm):  # 2
 def getColormap():  # 3.2
     inp = str(input("Introduza colormap (r, g, b): "))
     r, g, b = inp.split(",")
-    cm = cb_linesr.LinearSegmentedColormap.from_list(
+    cm = c.LinearSegmentedColormap.from_list(
         'cm', [(0, 0, 0), (int(r), int(g), int(b))], N=256)
     return cm
 
@@ -522,13 +522,13 @@ def main():
 
 if __name__ == '__main__':
 
-    cmr = cb_linesr.LinearSegmentedColormap.from_list(
+    cmr = c.LinearSegmentedColormap.from_list(
         'cmr', [(0, 0, 0), (1, 0, 0)], N=256)
-    cmg = cb_linesr.LinearSegmentedColormap.from_list(
+    cmg = c.LinearSegmentedColormap.from_list(
         'cmg', [(0, 0, 0), (0, 1, 0)], N=256)
-    cmb = cb_linesr.LinearSegmentedColormap.from_list(
+    cmb = c.LinearSegmentedColormap.from_list(
         'cmb', [(0, 0, 0), (0, 0, 1)], N=256)
-    cmGray = cb_linesr.LinearSegmentedColormap.from_list(
+    cmGray = c.LinearSegmentedColormap.from_list(
         'cmGray', [(0, 0, 0), (1, 1, 1)], N=256)
 
     main()
