@@ -13977,11 +13977,11 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="JPEG-Compressor-and-Decompressor">JPEG Compressor and Decompressor<a class="anchor-link" href="#JPEG-Compressor-and-Decompressor">&#182;</a></h1><h2 id="Report-+-Code">Report + Code<a class="anchor-link" href="#Report-+-Code">&#182;</a></h2><p><strong>Done by:</strong></p>
+<h1 id="JPEG-Compressor-and-Decompressor">JPEG Compressor and Decompressor<a class="anchor-link" href="#JPEG-Compressor-and-Decompressor">&#182;</a></h1><h2 id="Report">Report<a class="anchor-link" href="#Report">&#182;</a></h2><p><strong>Done by:</strong></p>
 <ul>
 <li>Marco Pais - Nº 2019218</li>
 <li>Tiago Oliveira - Nº 2019219068</li>
-<li>Emílio - </li>
+<li>Emílio Hurtado </li>
 </ul>
 
 </div>
@@ -14000,107 +14000,11 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-2">Exercise 2<a class="anchor-link" href="#Exercise-2">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">encoder</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>  <span class="c1"># 2</span>
-    <span class="c1"># cm = getColormap() # 3.2</span>
-    <span class="c1"># viewColormap(cm, img) # 3.3</span>
-
-    <span class="n">img</span> <span class="o">=</span> <span class="n">addPadding</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>  <span class="c1"># 4.1</span>
-    
-    <span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">separateRGB</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>  <span class="c1"># 3.4</span>
-    <span class="n">viewChanels</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="c1"># 3.5</span>
-
-    <span class="n">YCbCr</span> <span class="o">=</span> <span class="n">RGBtoYCbCr</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>  <span class="c1"># 5</span>
-    <span class="n">showYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">)</span> <span class="c1"># 5</span>
-    
-    <span class="k">global</span> <span class="n">YBefore</span>
-    <span class="n">YBefore</span> <span class="o">=</span> <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># 10</span>
-
-    <span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span> <span class="o">=</span> <span class="n">downSample</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">,</span> <span class="n">dSample</span><span class="p">)</span>  <span class="c1"># 6</span>
-    <span class="n">showDownSample</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span><span class="p">)</span> <span class="c1"># 6</span>
-
-    <span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span> <span class="o">=</span> <span class="n">calcDCT_8x8_64x64</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span><span class="p">)</span>  <span class="c1"># 7</span>
-    <span class="n">showDCT</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">)</span> <span class="c1"># 7.1.2</span>
-
-    <span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span> <span class="o">=</span> <span class="n">quantization</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">)</span> <span class="c1"># 8</span>
-    <span class="n">showQuantization</span><span class="p">(</span><span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span><span class="p">)</span>
-
-    <span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span> <span class="o">=</span> <span class="n">DCPM</span><span class="p">(</span><span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span><span class="p">)</span> <span class="c1"># 9</span>
-    <span class="n">showDCPM</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">decoder</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">):</span>  <span class="c1"># 2</span>
-    <span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span> <span class="o">=</span> <span class="n">IDCPM</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">)</span>
-
-    <span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span> <span class="o">=</span> <span class="n">deQuantization</span><span class="p">(</span><span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span><span class="p">)</span> <span class="c1"># 8</span>
-
-    <span class="n">Y_enc</span><span class="p">,</span> <span class="n">Cb_enc</span><span class="p">,</span> <span class="n">Cr_enc</span> <span class="o">=</span> <span class="n">calcIDCT_8x8_64x64</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">)</span>  <span class="c1"># 7</span>
-
-    <span class="n">YCbCrU</span> <span class="o">=</span> <span class="n">upSample</span><span class="p">(</span><span class="n">Y_enc</span><span class="p">,</span> <span class="n">Cb_enc</span><span class="p">,</span> <span class="n">Cr_enc</span><span class="p">,</span> <span class="n">dSample</span><span class="p">)</span>  <span class="c1"># 6</span>
-    <span class="n">showUpSample</span><span class="p">(</span><span class="n">YCbCrU</span><span class="p">)</span> <span class="c1"># 6</span>
-
-    <span class="k">global</span> <span class="n">YAfter</span>
-    <span class="n">YAfter</span> <span class="o">=</span> <span class="n">YCbCrU</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="n">RGBAfter</span> <span class="o">=</span> <span class="n">YCbCrtoRGB</span><span class="p">(</span><span class="n">YCbCrU</span><span class="p">)</span>  <span class="c1"># 5</span>
-
-    <span class="n">RGBAfter</span> <span class="o">=</span> <span class="n">unpadding</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">)</span>  <span class="c1"># 4</span>
-
-    <span class="k">return</span> <span class="n">RGBAfter</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-3">Exercise 3<a class="anchor-link" href="#Exercise-3">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">openImage</span><span class="p">():</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;imagens/</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s1">.bmp&#39;</span><span class="p">)</span>  <span class="c1"># 3.1</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Original Image&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/Original.png&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">img</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14115,104 +14019,6 @@ a.anchor-link {
 <td> <img src="logo/Original.png" /> </td>
 </table>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getColormap</span><span class="p">():</span>  <span class="c1"># 3.2</span>
-    <span class="n">inp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Introduza colormap (r, g, b): &quot;</span><span class="p">))</span>
-    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-    <span class="n">cm</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
-        <span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">))],</span> <span class="n">N</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cm</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">viewColormap</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>  <span class="c1"># 3.3</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">separateRGB</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>  <span class="c1"># 3.4</span>
-    <span class="n">R</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">G</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">B</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">joinRGB</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>  <span class="c1"># 3.4</span>
-    <span class="n">RGB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">RGB</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">viewChanels</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>  <span class="c1"># 3.5</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Initial Red&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">cmr</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Initial Green&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">cmg</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Initial Blue&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">cmb</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/RGB.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14232,79 +14038,6 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-4">Exercise 4<a class="anchor-link" href="#Exercise-4">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">addPadding</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>  <span class="c1"># 4.1</span>
-    <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="mi">64</span><span class="p">:</span>
-        <span class="n">pad</span> <span class="o">=</span> <span class="mi">128</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pad</span> <span class="o">=</span> <span class="mi">16</span>
-
-    <span class="k">if</span> <span class="n">h</span> <span class="o">%</span> <span class="n">pad</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">add</span> <span class="o">=</span> <span class="n">pad</span> <span class="o">-</span> <span class="p">(</span><span class="n">h</span> <span class="o">%</span> <span class="n">pad</span><span class="p">)</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">h</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">add</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">w</span> <span class="o">%</span> <span class="n">pad</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">add</span> <span class="o">=</span> <span class="n">pad</span> <span class="o">-</span> <span class="p">(</span><span class="n">w</span> <span class="o">%</span> <span class="n">pad</span><span class="p">)</span>
-        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">arr</span><span class="p">[</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">add</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">unpadding</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">):</span>  <span class="c1"># 4</span>
-    <span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">separateRGB</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">)</span>
-
-    <span class="n">R</span> <span class="o">=</span> <span class="n">R</span><span class="p">[:</span><span class="n">h</span><span class="p">,</span> <span class="p">:</span><span class="n">w</span><span class="p">]</span>
-    <span class="n">G</span> <span class="o">=</span> <span class="n">G</span><span class="p">[:</span><span class="n">h</span><span class="p">,</span> <span class="p">:</span><span class="n">w</span><span class="p">]</span>
-    <span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="p">[:</span><span class="n">h</span><span class="p">,</span> <span class="p">:</span><span class="n">w</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">joinRGB</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showRebuilt</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">):</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rebuilt Image - </span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">/Rebuilt_</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14365,93 +14098,6 @@ img{
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-5">Exercise 5<a class="anchor-link" href="#Exercise-5">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">RGBtoYCbCr</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>  <span class="c1"># 5</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.299</span><span class="p">,</span> <span class="mf">0.587</span><span class="p">,</span> <span class="mf">0.114</span><span class="p">],</span>
-                       <span class="p">[</span><span class="o">-</span><span class="mf">0.168736</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.331264</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.418688</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.081312</span><span class="p">]])</span>
-
-    <span class="n">RGB</span> <span class="o">=</span> <span class="n">joinRGB</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
-    
-    <span class="k">global</span> <span class="n">RGBPadded</span>
-    <span class="n">RGBPadded</span> <span class="o">=</span> <span class="n">RGB</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="n">YCbCr</span> <span class="o">=</span> <span class="n">RGB</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">128</span>
-
-    <span class="k">return</span> <span class="n">YCbCr</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">YCbCrtoRGB</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">):</span>  <span class="c1"># 5</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.299</span><span class="p">,</span> <span class="mf">0.587</span><span class="p">,</span> <span class="mf">0.114</span><span class="p">],</span>
-                       <span class="p">[</span><span class="o">-</span><span class="mf">0.168736</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.331264</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.418688</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.081312</span><span class="p">]])</span>
-
-    <span class="n">inverted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-    <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span> <span class="o">-=</span> <span class="mi">128</span>
-    <span class="n">RGB</span> <span class="o">=</span> <span class="n">YCbCr</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">inverted</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="n">RGB</span> <span class="o">=</span> <span class="n">RGB</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
-    <span class="n">RGB</span><span class="p">[</span><span class="n">RGB</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
-    <span class="n">RGB</span><span class="p">[</span><span class="n">RGB</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">RGB</span> <span class="o">=</span> <span class="n">RGB</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-
-    <span class="c1"># comp = RGB == RGBPadded</span>
-    <span class="c1"># res = comp.all()</span>
-    <span class="c1"># print(&quot;Equal to original RGB?\n&quot; + str(res))</span>
-
-    <span class="k">return</span> <span class="n">RGB</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">):</span>  <span class="c1"># 5</span>
-    <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span> <span class="o">=</span> <span class="n">separateYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">)</span>
-
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Y Original&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cb Original&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Cb</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cr Original&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Cr</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/YCbCr.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14468,81 +14114,11 @@ img{
 <tr> <td> <img src="logo/YCbCr.png" /> </td> </tr>
 </table>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">separateYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">):</span>
-    <span class="n">Y</span> <span class="o">=</span> <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>
-    <span class="n">Cb</span> <span class="o">=</span> <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">Cr</span> <span class="o">=</span> <span class="n">YCbCr</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">2</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-6">Exercise 6<a class="anchor-link" href="#Exercise-6">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">downSample</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">,</span> <span class="n">dSample</span><span class="p">):</span>  <span class="c1"># 6</span>
-    <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span> <span class="o">=</span> <span class="n">separateYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">)</span>
-
-    <span class="n">Cb</span> <span class="o">=</span> <span class="n">Cb</span><span class="p">[:,</span> <span class="p">::</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">Cr</span> <span class="o">=</span> <span class="n">Cr</span><span class="p">[:,</span> <span class="p">::</span><span class="mi">2</span><span class="p">]</span>
-
-    <span class="k">if</span><span class="p">(</span><span class="n">dSample</span> <span class="o">==</span> <span class="mi">420</span><span class="p">):</span>
-        <span class="n">Cb</span> <span class="o">=</span> <span class="n">Cb</span><span class="p">[::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">Cr</span> <span class="o">=</span> <span class="n">Cr</span><span class="p">[::</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
-
-    <span class="k">return</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showDownSample</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span><span class="p">):</span>  <span class="c1"># 6</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Y DownSampled&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cb Downsampled&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">CbD</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cr Downsampled&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">CrD</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/Downsample.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14559,67 +14135,6 @@ img{
 <tr> <td> <img src="logo/Downsample.png" /> </td> </tr>
 </table>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">upSample</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span><span class="p">,</span> <span class="n">dSample</span><span class="p">):</span>  <span class="c1"># 6</span>
-    <span class="n">CbU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">CbD</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">CrU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">CrD</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">YD</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">CbU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">CbU</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">CrU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">CrU</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">dSample</span> <span class="o">==</span> <span class="mi">420</span><span class="p">:</span>
-        <span class="n">CbU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">CbU</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">CrU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">CrU</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">YD</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">CbU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">CbU</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">CrU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">CrU</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">YCbCrU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbU</span><span class="p">,</span> <span class="n">CrU</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">YCbCrU</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showUpSample</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">):</span>
-    <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span> <span class="o">=</span> <span class="n">separateYCbCr</span><span class="p">(</span><span class="n">YCbCr</span><span class="p">)</span>
-
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Y UpSampled - </span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cb UpSampled - </span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Cb</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cr UpSampled - </span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Cr</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">/Upsample_</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14691,83 +14206,6 @@ img{
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-7">Exercise 7<a class="anchor-link" href="#Exercise-7">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calcDCT_8x8_64x64</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">CbD</span><span class="p">,</span> <span class="n">CrD</span><span class="p">):</span>  <span class="c1"># 7</span>
-    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">or</span> <span class="n">opt</span> <span class="o">==</span> <span class="mi">64</span><span class="p">:</span>
-        <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">YD</span><span class="p">)</span>
-        <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">Cb_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">CbD</span><span class="p">)</span>
-
-        <span class="n">Y_dct</span> <span class="o">=</span> <span class="n">YD</span>
-        <span class="n">Cb_dct</span> <span class="o">=</span> <span class="n">CbD</span>
-        <span class="n">Cr_dct</span> <span class="o">=</span> <span class="n">CrD</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-                <span class="n">Y_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-                <span class="n">Cb_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">Cb_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-                <span class="n">Cr_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">Cr_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">Y_dct</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">YD</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">Cb_dct</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">CbD</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">Cr_dct</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span><span class="n">dct</span><span class="p">(</span><span class="n">CrD</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-    <span class="n">a</span> <span class="o">=</span> <span class="n">Y_dct</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">Cb_dct</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">Cr_dct</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="sd">&quot;&quot;&quot;Y_enc, Cb_enc, Cr_enc = calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct)</span>
-<span class="sd">    comp = Y_enc == YD</span>
-<span class="sd">    res = comp.all()</span>
-<span class="sd">    print(&quot;Equal to original Y_d?\n&quot; + str(res))</span>
-<span class="sd">    comp = Cb_enc == CbD</span>
-<span class="sd">    res = comp.all()</span>
-<span class="sd">    print(&quot;Equal to original Cb_d?\n&quot; + str(res))</span>
-<span class="sd">    comp = Cr_enc == CrD</span>
-<span class="sd">    res = comp.all()</span>
-<span class="sd">    print(&quot;Equal to original Cr_d?\n&quot; + str(res))&quot;&quot;&quot;</span>
-    
-    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showDCT</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">):</span>  <span class="c1"># 7.1.2</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Y_DCT - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;x&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cb_DCT - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;x&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Cb_dct</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cr_DCT - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;x&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opt</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Cr_dct</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/DCT</span><span class="si">{</span><span class="n">opt</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">opt</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -14784,191 +14222,11 @@ img{
 <tr> <td> <img src="logo/DCT8x8.png" /> </td> </tr>
 </table>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calcIDCT_8x8_64x64</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">):</span>  <span class="c1"># 7</span>
-    <span class="k">if</span> <span class="n">opt</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">or</span> <span class="n">opt</span> <span class="o">==</span> <span class="mi">64</span><span class="p">:</span>
-        <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">)</span>
-        <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">Cb_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Cb_dct</span><span class="p">)</span>
-
-        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y_dct</span>
-        <span class="n">Cb</span> <span class="o">=</span> <span class="n">Cb_dct</span>
-        <span class="n">Cr</span> <span class="o">=</span> <span class="n">Cr_dct</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-                <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-                <span class="n">Cb</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Cb</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-                <span class="n">Cr</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Cr</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s2">&quot;ortho&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">Y</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">Cb</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Cb_dct</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">Cr</span> <span class="o">=</span> <span class="n">idct</span><span class="p">(</span><span class="n">idct</span><span class="p">(</span><span class="n">Cr_dct</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s1">&#39;ortho&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-    <span class="k">return</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Cb</span><span class="p">,</span> <span class="n">Cr</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-8">Exercise 8<a class="anchor-link" href="#Exercise-8">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">getQuantizationMatrix</span><span class="p">():</span>      <span class="c1"># 8</span>
-    <span class="n">Q_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">61</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">55</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">57</span><span class="p">,</span> <span class="mi">69</span><span class="p">,</span> <span class="mi">56</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">62</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">109</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">77</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">92</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">49</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">87</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">121</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">101</span><span class="p">],</span>
-                    <span class="p">[</span><span class="mi">72</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">99</span><span class="p">]])</span>
-
-    <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">56</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">47</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">],</span>
-                       <span class="p">[</span><span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">99</span><span class="p">]])</span>
-
-    <span class="k">if</span> <span class="n">quality</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
-        <span class="n">Q_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Q_Y</span><span class="p">))</span>
-        <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Q_CbCr</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">Q_Y</span><span class="p">,</span> <span class="n">Q_CbCr</span>
-
-    <span class="k">elif</span> <span class="n">quality</span> <span class="o">&gt;</span> <span class="mi">50</span><span class="p">:</span>
-        <span class="n">Q_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_Y</span> <span class="o">*</span> <span class="p">((</span><span class="mi">100</span> <span class="o">-</span> <span class="n">quality</span><span class="p">)</span> <span class="o">/</span> <span class="mi">50</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
-        <span class="n">Q_Y</span><span class="p">[</span><span class="n">Q_Y</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
-        <span class="n">Q_Y</span> <span class="o">=</span> <span class="n">Q_Y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-
-        <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_CbCr</span> <span class="o">*</span> <span class="p">((</span><span class="mi">100</span> <span class="o">-</span> <span class="n">quality</span><span class="p">)</span> <span class="o">/</span> <span class="mi">50</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
-        <span class="n">Q_CbCr</span><span class="p">[</span><span class="n">Q_CbCr</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
-        <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">Q_CbCr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Q_Y</span><span class="p">,</span> <span class="n">Q_CbCr</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">Q_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_Y</span> <span class="o">*</span> <span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">quality</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
-        <span class="n">Q_Y</span><span class="p">[</span><span class="n">Q_Y</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
-        <span class="n">Q_Y</span> <span class="o">=</span> <span class="n">Q_Y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-
-        <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q_CbCr</span> <span class="o">*</span> <span class="p">(</span><span class="mi">50</span> <span class="o">/</span> <span class="n">quality</span><span class="p">))</span><span class="o">.</span><span class="n">round</span><span class="p">()</span>
-        <span class="n">Q_CbCr</span><span class="p">[</span><span class="n">Q_CbCr</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
-        <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">Q_CbCr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Q_Y</span><span class="p">,</span> <span class="n">Q_CbCr</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">quantization</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span><span class="p">):</span>    <span class="c1"># 8</span>
-    <span class="n">Q_Y</span><span class="p">,</span> <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">getQuantizationMatrix</span><span class="p">()</span>
-
-    <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Y_dct</span><span class="p">)</span>
-    <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">Cb_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Cb_dct</span><span class="p">)</span>
-
-    <span class="n">YQ</span> <span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span> <span class="o">=</span> <span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">/</span> <span class="n">Q_Y</span><span class="p">)</span>
-            
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">/</span> <span class="n">Q_CbCr</span><span class="p">)</span>
-            <span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">/</span> <span class="n">Q_CbCr</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">deQuantization</span><span class="p">(</span><span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span><span class="p">):</span>    <span class="c1"># 8</span>
-    <span class="n">Q_Y</span><span class="p">,</span> <span class="n">Q_CbCr</span> <span class="o">=</span> <span class="n">getQuantizationMatrix</span><span class="p">()</span>
-
-    <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Y_Q</span><span class="p">)</span>
-    <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">Cb_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Cb_Q</span><span class="p">)</span>
-
-    <span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span> <span class="o">=</span> <span class="n">Y_Q</span><span class="p">,</span> <span class="n">Cb_Q</span><span class="p">,</span> <span class="n">Cr_Q</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="n">Y_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">*</span> <span class="n">Q_Y</span>
-                
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_lines</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Cb_cols</span><span class="p">,</span> <span class="n">opt</span><span class="p">):</span>
-            <span class="n">Cb_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cb_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">*</span> <span class="n">Q_CbCr</span>
-            <span class="n">Cr_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cr_dct</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">opt</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span> <span class="o">+</span> <span class="n">opt</span><span class="p">]</span> <span class="o">*</span> <span class="n">Q_CbCr</span>
-    
-    <span class="k">return</span> <span class="n">Y_dct</span><span class="p">,</span> <span class="n">Cb_dct</span><span class="p">,</span> <span class="n">Cr_dct</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showQuantization</span><span class="p">(</span><span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span><span class="p">):</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Y_DCTQ - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">YQ</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cb_DCTQ - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">CbQ</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cr_DCTQ - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">CrQ</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>    
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">/Quantization_</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -15040,120 +14298,6 @@ img{
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-9">Exercise 9<a class="anchor-link" href="#Exercise-9">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">DCPM</span><span class="p">(</span><span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span><span class="p">):</span>  <span class="c1"># 9</span>
-    <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">YQ</span><span class="p">)</span>
-    <span class="n">C_lines</span><span class="p">,</span> <span class="n">C_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">CbQ</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="n">dcY0</span> <span class="o">=</span> <span class="n">YQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="n">dcCb0</span> <span class="o">=</span> <span class="n">CbQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="n">dcCr0</span> <span class="o">=</span> <span class="n">CrQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="k">continue</span>
-
-            <span class="n">dcY</span> <span class="o">=</span> <span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-            <span class="n">diffY</span> <span class="o">=</span> <span class="n">dcY</span> <span class="o">-</span> <span class="n">dcY0</span>
-            <span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffY</span>
-            <span class="n">dcY0</span> <span class="o">=</span> <span class="n">dcY</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">C_lines</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">C_cols</span><span class="p">:</span>
-                <span class="n">dcCb</span> <span class="o">=</span> <span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-                <span class="n">dcCr</span> <span class="o">=</span> <span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-
-                <span class="n">diffCb</span> <span class="o">=</span> <span class="n">dcCb</span> <span class="o">-</span> <span class="n">dcCb0</span>
-                <span class="n">diffCr</span> <span class="o">=</span> <span class="n">dcCr</span> <span class="o">-</span> <span class="n">dcCr0</span>
-
-                <span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffCb</span>
-                <span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffCr</span>
-
-                <span class="n">dcCb0</span> <span class="o">=</span> <span class="n">dcCb</span>
-                <span class="n">dcCr0</span> <span class="o">=</span> <span class="n">dcCr</span>
-    <span class="k">return</span> <span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">IDCPM</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">):</span>  <span class="c1"># 9</span>
-    <span class="n">Y_lines</span><span class="p">,</span> <span class="n">Y_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">)</span>
-    <span class="n">C_lines</span><span class="p">,</span> <span class="n">C_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Cb_dcpm</span><span class="p">)</span>
-
-    <span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span> <span class="o">=</span> <span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span>
-
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_lines</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Y_cols</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">dcY0</span> <span class="o">=</span> <span class="n">YQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="n">dcCb0</span> <span class="o">=</span> <span class="n">CbQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="n">dcCr0</span> <span class="o">=</span> <span class="n">CrQ</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                <span class="k">continue</span>
-
-            <span class="n">diffY</span> <span class="o">=</span> <span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-            <span class="n">diffY</span> <span class="o">+=</span> <span class="n">dcY0</span>
-            <span class="n">YQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffY</span>
-            <span class="n">dcY0</span> <span class="o">=</span> <span class="n">diffY</span>
-
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">C_lines</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">C_cols</span><span class="p">:</span>
-                <span class="n">diffCb</span> <span class="o">=</span> <span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-                <span class="n">diffCr</span> <span class="o">=</span> <span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
-
-                <span class="n">diffCb</span> <span class="o">+=</span> <span class="n">dcCb0</span>
-                <span class="n">diffCr</span> <span class="o">+=</span> <span class="n">dcCr0</span>
-
-                <span class="n">CbQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffCb</span>
-                <span class="n">CrQ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">diffCr</span>
-
-                <span class="n">dcCb0</span> <span class="o">=</span> <span class="n">diffCb</span>
-                <span class="n">dcCr0</span> <span class="o">=</span> <span class="n">diffCr</span>
-
-    <span class="k">return</span> <span class="n">YQ</span><span class="p">,</span> <span class="n">CbQ</span><span class="p">,</span> <span class="n">CrQ</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">showDCPM</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">):</span>
-    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Y_DCPM - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cb_DCPM - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Cb_dcpm</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cr_DCPM - &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">Cr_dcpm</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">),</span> <span class="n">cmGray</span><span class="p">)</span>  
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">/DCPM_</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>  
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -15225,28 +14369,6 @@ img{
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Exercise-10">Exercise 10<a class="anchor-link" href="#Exercise-10">&#182;</a></h2>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">YDiff</span><span class="p">():</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">YBefore</span><span class="p">,</span> <span class="n">YAfter</span><span class="p">))</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Y Diff - </span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">cmGray</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">img_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">/YDiff_</span><span class="si">{</span><span class="n">quality</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -15303,34 +14425,6 @@ img{
 
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">MSE</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">RGBBefore</span> <span class="o">-</span> <span class="n">RGBAfter</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">RMSE</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">MSE</span><span class="p">())</span>
-
-
-<span class="k">def</span> <span class="nf">SNR</span><span class="p">():</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">RGBBefore</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
-    <span class="k">return</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="n">MSE</span><span class="p">())</span>
-
-
-<span class="k">def</span> <span class="nf">PSNR</span><span class="p">():</span>
-    <span class="k">return</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">RGBBefore</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">MSE</span><span class="p">())</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
@@ -15470,76 +14564,6 @@ img{
 
 </div>
 </div>
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Main">Main<a class="anchor-link" href="#Main">&#182;</a></h2>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">c</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.fftpack</span> <span class="kn">import</span> <span class="n">dct</span><span class="p">,</span> <span class="n">idct</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
-
-    <span class="k">global</span> <span class="n">img_name</span><span class="p">,</span> <span class="n">RGBBefore</span><span class="p">,</span> <span class="n">RGBAfter</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">dSample</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="n">quality</span>
-
-    <span class="n">img_name</span> <span class="o">=</span> <span class="s2">&quot;peppers&quot;</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">openImage</span><span class="p">()</span>
-    <span class="n">RGBBefore</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-    <span class="n">dSample</span> <span class="o">=</span> <span class="mi">420</span>
-    <span class="n">opt</span> <span class="o">=</span> <span class="mi">8</span>
-    <span class="c1">#quality = 10</span>
-
-    <span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span> <span class="o">=</span> <span class="n">encoder</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-    <span class="n">RGBAfter</span> <span class="o">=</span> <span class="n">decoder</span><span class="p">(</span><span class="n">Y_dcpm</span><span class="p">,</span> <span class="n">Cb_dcpm</span><span class="p">,</span> <span class="n">Cr_dcpm</span><span class="p">)</span>
-    
-    <span class="n">YDiff</span><span class="p">()</span>
-    
-    <span class="n">showRebuilt</span><span class="p">(</span><span class="n">RGBAfter</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
-        
-    <span class="n">RGBBefore</span> <span class="o">=</span> <span class="n">RGBBefore</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">RGBAfter</span> <span class="o">=</span> <span class="n">RGBAfter</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-
-    <span class="sd">&quot;&quot;&quot;print(&quot;Mean Square Error (MSE):&quot;, MSE())</span>
-<span class="sd">    print(&quot;Root Mean Square Error (RMSE):&quot;, RMSE())</span>
-<span class="sd">    print(&quot;Signal-to-Noise Ratio (SNR):&quot;, SNR())</span>
-<span class="sd">    print(&quot;Peak Signal-to-Noise Ratio (PSNR):&quot;, PSNR())&quot;&quot;&quot;</span>
-    
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-
-    <span class="n">cmr</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
-        <span class="s1">&#39;cmr&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">N</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-    <span class="n">cmg</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
-        <span class="s1">&#39;cmg&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">N</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-    <span class="n">cmb</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
-        <span class="s1">&#39;cmb&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">N</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-    <span class="n">cmGray</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span>
-        <span class="s1">&#39;cmGray&#39;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">N</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
-
-    <span class="k">global</span> <span class="n">quality</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">100</span><span class="p">]:</span>
-        <span class="n">quality</span> <span class="o">=</span> <span class="n">i</span>
-        <span class="n">main</span><span class="p">()</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 </body>
 
