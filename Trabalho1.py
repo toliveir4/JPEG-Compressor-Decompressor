@@ -25,21 +25,21 @@ def encoder(img):  # 2
     # showDownSample(YD, CbD, CrD) # 6
 
     Y_dct, Cb_dct, Cr_dct = calcDCT_8x8_64x64(YD, CbD, CrD)  # 7
-    # showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
+    showDCT(Y_dct, Cb_dct, Cr_dct) # 7.1.2
 
-    Y_Q, Cb_Q, Cr_Q = quantization(Y_dct, Cb_dct, Cr_dct)  # 8
+    """Y_Q, Cb_Q, Cr_Q = quantization(Y_dct, Cb_dct, Cr_dct)  # 8
 
-    Y_dcpm, Cb_dcpm, Cr_dcpm = DCPM(Y_Q, Cb_Q, Cr_Q)  # 9
+    Y_dcpm, Cb_dcpm, Cr_dcpm = DCPM(Y_Q, Cb_Q, Cr_Q)  # 9"""
 
-    return Y_dcpm, Cb_dcpm, Cr_dcpm
+    return Y_dct, Cb_dct, Cr_dct
 
 
 def decoder(Y_dcpm, Cb_dcpm, Cr_dcpm):  # 2
-    Y_Q, Cb_Q, Cr_Q = IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm)
+    """Y_Q, Cb_Q, Cr_Q = IDCPM(Y_dcpm, Cb_dcpm, Cr_dcpm)
 
-    Y_dct, Cb_dct, Cr_dct = deQuantization(Y_Q, Cb_Q, Cr_Q)  # 8
+    Y_dct, Cb_dct, Cr_dct = deQuantization(Y_Q, Cb_Q, Cr_Q)  # 8"""
 
-    Y_enc, Cb_enc, Cr_enc = calcIDCT_8x8_64x64(Y_dct, Cb_dct, Cr_dct)  # 7
+    Y_enc, Cb_enc, Cr_enc = calcIDCT_8x8_64x64(Y_dcpm, Cb_dcpm, Cr_dcpm)  # 7
 
     YCbCrU = upSample(Y_enc, Cb_enc, Cr_enc, dSample)  # 6
     # showYCbCr(YCbCrU) # 6
@@ -490,32 +490,31 @@ def main():
 
     global img_name, RGBBefore, RGBAfter, h, w, dSample, opt, quality
 
-    img_name = "barn_mountains"
+    img_name = "peppers"
     img = plt.imread(f'imagens/{img_name}.bmp')  # 3.1
     RGBBefore = img
 
     h, w, _ = np.shape(img)
     dSample = 420
-    opt = 8
-    quality = 75
+    opt = 64
+    quality = 100
 
     Y_dcpm, Cb_dcpm, Cr_dcpm = encoder(img)
     RGBAfter = decoder(Y_dcpm, Cb_dcpm, Cr_dcpm)
 
-    plt.figure()
+    """plt.figure()
     plt.title("Imagem reconstruida")
     plt.imshow(RGBAfter)
-    plt.axis('off')
-
+    plt.axis('off')"""
     YDiff()
 
     RGBBefore = RGBBefore.astype(float)
     RGBAfter = RGBAfter.astype(float)
 
-    print(MSE())
+    """print(MSE())
     print(RMSE())
     print(SNR())
-    print(PSNR())
+    print(PSNR())"""
 
     plt.show()
 
